@@ -76,8 +76,7 @@
 
     <target name="compile" depends="TPTP" description="Compile the project and place in ${build.classes}.">
         <mkdir dir="${build.classes}"/>
-        <javac destdir="${build.classes}" debug="on" optimize="on" deprecation="on" includeantruntime="false"
-               classpathref="compile.classpath">
+        <javac destdir="${build.classes}" debug="on" optimize="on" deprecation="on" includeantruntime="false" classpathref="compile.classpath" encoding="UTF-8">
             <src refid="core.sourcepath"/>
         </javac>
         <copy todir="${build.lib}">
