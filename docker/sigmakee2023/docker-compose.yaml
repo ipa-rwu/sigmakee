@@ -1,0 +1,23 @@
+version: '3'
+networks:
+  net:
+    external: false
+    driver: "bridge"
+
+services:
+  SUMOjEdit:
+    image: sigma
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./exercise/:/root/exercise
+    environment:
+      - DISPLAY=${DISPLAY}
+    stdin_open: true
+    tty: true
+    networks:
+      - net
+    ports:
+      - 8080:8080
