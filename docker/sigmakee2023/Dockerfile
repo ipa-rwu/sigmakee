@@ -16,6 +16,7 @@ RUN apt install zlib1g-dev -y
 RUN apt install g++ -y
 RUN apt install linux-headers-generic -y
 RUN apt install openjdk-8-jdk -y
+RUN apt install jedit -y
 
 # Setup home directory
 RUN cd /root \
@@ -79,13 +80,20 @@ RUN cd /root/workspace \
     && git clone -b rwu/feature/use_sumo_in_docker https://github.com/ipa-rwu/sigmakee \
     && git clone https://github.com/ontologyportal/sumo \
     && git clone https://github.com/ontologyportal/TPTP-ANTLR \
-    && git clone https://github.com/ontologyportal/SigmaUtils
+    && git clone https://github.com/ontologyportal/SigmaUtils \
+    && git clone https://github.com/ontologyportal/SUMOjEdit.git
 
 RUN update-java-alternatives --set java-1.8.0-openjdk-amd64
 RUN echo "export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")" >> /root/.bashrc
 
 # Setup sigmakee
 RUN cd /root/workspace/sigmakee \
+    && . /root/.bashrc \
+    && ant
+
+COPY jedit_catalog /root/.jedit/modes/catalog
+
+RUN cd /root/workspace/SUMOjEdit \
     && . /root/.bashrc \
     && ant
 
