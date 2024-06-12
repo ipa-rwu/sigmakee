@@ -1,21 +1,21 @@
-FROM alpine:latest
+FROM ubuntu:latest
 
 # Install required libraries
-RUN apk update
-RUN apk upgrade
-RUN apk add gcompat
-RUN apk add bash
-RUN apk add unzip
-RUN apk add git
-RUN apk add make
-RUN apk add gcc
-RUN apk add musl-dev
-RUN apk add graphviz
-RUN apk add apache-ant
-RUN apk add zlib-dev
-RUN apk add g++
-RUN apk add linux-headers
-RUN apk add openjdk8
+RUN apt update
+RUN apt upgrade -qy
+# RUN apt install gcompat
+RUN apt install bash
+RUN apt install unzip
+RUN apt install git -y
+RUN apt install make -y
+RUN apt install gcc -y
+RUN apt install musl-dev -y
+RUN apt install graphviz -y
+RUN apt install ant -y
+RUN apt install zlib1g-dev -y
+RUN apt install g++ -y
+RUN apt install linux-headers-generic -y
+RUN apt install openjdk-8-jdk -y
 
 # Setup home directory
 RUN cd /root \
@@ -35,7 +35,8 @@ RUN cd /root \
     && echo "export ONTOLOGYPORTAL_GIT=/root/workspace" >> .bashrc \
     && echo 'export CATALINA_OPTS="$CATALINA_OPTS -Xmx10g"' >> .bashrc \
     && echo "export CATALINA_HOME=/root/Programs/apache-tomcat-8.5.23" >> .bashrc \
-    && source .bashrc
+    && echo "export JEDIT_HOME=/root/.jedit" >> .bashrc \
+    && . /root/.bashrc
 
 # Setup Vampire
 RUN cd /root/workspace \
@@ -44,6 +45,7 @@ RUN cd /root/workspace \
     && make -j 4 vampire_rel \
     && mv vampire_rel_master* vampire
 
+RUN apt install wget -y
 # Setup Apache, E and Wordnet
 RUN cd /root/Programs \
     && wget 'https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23.zip' \
@@ -79,13 +81,16 @@ RUN cd /root/workspace \
     && git clone https://github.com/ontologyportal/TPTP-ANTLR \
     && git clone https://github.com/ontologyportal/SigmaUtils
 
+RUN update-java-alternatives --set java-1.8.0-openjdk-amd64
+RUN echo "export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")" >> /root/.bashrc
+
 # Setup sigmakee
 RUN cd /root/workspace/sigmakee \
-    && source /root/.bashrc \
+    && . /root/.bashrc \
     && ant
 
 # Add sumo kif knowledge-bases
 RUN cp -R /root/workspace/sumo/* /root/.sigmakee/KBs
 COPY kbs /root/.sigmakee/KBs
 
-CMD cd /root && source .bashrc && /root/Programs/apache-tomcat-8.5.23/bin/startup.sh && tail -f /root/Programs/apache-tomcat-8.5.23/logs/catalina.out
+CMD cd /root && . /root/.bashrc && /root/Programs/apache-tomcat-8.5.23/bin/startup.sh && tail -f /root/Programs/apache-tomcat-8.5.23/logs/catalina.out
