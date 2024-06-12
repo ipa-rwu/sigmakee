@@ -76,7 +76,7 @@ RUN cd /root/Programs \
 
 # Clone ontologyportal git repos
 RUN cd /root/workspace \
-    && git clone https://github.com/ontologyportal/sigmakee \
+    && git clone -b rwu/feature/use_sumo_in_docker https://github.com/ipa-rwu/sigmakee \
     && git clone https://github.com/ontologyportal/sumo \
     && git clone https://github.com/ontologyportal/TPTP-ANTLR \
     && git clone https://github.com/ontologyportal/SigmaUtils
